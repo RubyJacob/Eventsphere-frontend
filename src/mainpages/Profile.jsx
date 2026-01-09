@@ -9,9 +9,61 @@ import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlinePeopleAlt } from "react-icons/md";
 import { MdOutlineEmail } from "react-icons/md";
 import { MdRememberMe } from "react-icons/md";
+import { useState } from 'react';
+import { allUserBookedEventsAPI } from '../services/allAPI';
+import { useEffect } from 'react';
 
 
 function Profile() {
+  const [alluserEvents,setAlluserEvents] = useState({})
+  const [userProfile,setUserProfile] = useState({})
+  console.log(alluserEvents);
+  console.log(userProfile);
+  
+  
+  
+  
+  const formatDate = (date) =>
+  new Date(date)
+    .toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
+    .replace(" ", " ")
+    .replace(" ", ", ");
+
+
+
+  useEffect(()=>{
+     userEvents()
+  },[])
+
+  useEffect(()=>{
+     if(sessionStorage.getItem("token") && sessionStorage.getItem("user")){
+        const user = JSON.parse(sessionStorage.getItem("user"))
+        setUserProfile(user)
+     }
+  },[])
+
+      const userEvents = async()=>{
+      const token = sessionStorage.getItem("token")
+                        if(token){
+                           const reqHeader = {
+                                 "Authorization":`Bearer ${token}`
+                            }
+                          const result = await allUserBookedEventsAPI(reqHeader)
+                          //console.log(result.data);
+                          if(result.status == 200){
+                            setAlluserEvents(result.data)
+                          }
+                          else{
+                            console.log(result);                       
+                          }
+                          
+                        }
+                }
+
   return (
     <>
     <Header/>
@@ -24,9 +76,9 @@ function Profile() {
                   <img className='h-40 w-40 rounded-full' src="https://img.freepik.com/premium-photo/business-stock-photo-wallpaper_1137879-162007.jpg" alt="profile" />
                 </div>
            <div>
-           <h2 className="text-4xl font-semibold ">Ruby Jacob</h2>
-           <h2 className="text-xl font-semibold text-gray-300 flex items-center gap-3 mt-4 "> <MdOutlineEmail /> jruby4918@gmail.com</h2>
-           <h2 className="text-xl font-semibold text-gray-300 flex items-center gap-3 mt-2  "> <MdRememberMe /> Member since Aug 2023</h2>
+           <h2 className="text-4xl font-semibold ">{userProfile?.username}</h2>
+           <h2 className="text-xl font-semibold text-gray-300 flex items-center gap-3 mt-4 "> <MdOutlineEmail />{userProfile?.email}</h2>
+           <h2 className="text-xl font-semibold text-gray-300 flex items-center gap-3 mt-2  "> <MdRememberMe /> Member since {formatDate(userProfile?.createdAt)}</h2>
     </div>
     </div>
     <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
@@ -48,46 +100,33 @@ function Profile() {
       </p>
 
       {/* Activity Card 1 */}
-      <div className="flex items-start gap-4 p-4 border rounded-lg mb-4">
+      {
+        alluserEvents?.events?.length > 0 ?
+        alluserEvents.events?.map((uevent,index)=>(
+          <div key={index} className="flex items-start gap-4 p-4 border rounded-lg mb-4">
         <div className="h-10 w-10 rounded-full bg-purple-100 text-blue-600 flex items-center justify-center font-bold">
           E
         </div>
 
         <div className="flex-1">
           <span className="text-xl bg-purple-400 p-2 rounded-3xl inline-block mb-3">
-            Corporate Conference
+            {uevent?.category}
           </span>
 
-         <p className='flex items-center gap-3 text-xl p-2 mt-4'><MdOutlinePeopleAlt className='text-xl text-purple-600' />Global Tech Conference</p>
-                  <p className='flex items-center gap-3 text-xl p-2'><LuCalendarDays className='text-xl  text-purple-600' />Dec 28,2025</p>
-                   <p className='flex items-center gap-3 text-xl p-2'><IoLocationOutline className='text-xl  text-purple-600' />MC Road, Bangalore</p>
+         <p className='flex items-center gap-3 text-xl p-2 mt-4'><MdOutlinePeopleAlt className='text-xl text-purple-600' /> {uevent?.title}</p>
+                  <p className='flex items-center gap-3 text-xl p-2'><LuCalendarDays className='text-xl  text-purple-600' />{formatDate(uevent?.date)}</p>
+                   <p className='flex items-center gap-3 text-xl p-2'><IoLocationOutline className='text-xl  text-purple-600' />{uevent?.location}</p>
         </div>
 
-        <span className="text-yellow-600 font-semibold flex gap-2 items-center">
+        {/* <span className="text-yellow-600 font-semibold flex gap-2 items-center">
           Pending <FaRegClock />
-        </span>
+        </span> */}
       </div>
-
-      {/* Activity Card 2 */}
-      <div className="flex items-start gap-4 p-4 border rounded-lg">
-        <div className="h-10 w-10 rounded-full bg-purple-100 text-blue-600 flex items-center justify-center font-bold">
-          E
-        </div>
-
-        <div className="flex-1">
-          <span className="text-xl bg-purple-400 p-2 rounded-3xl inline-block mb-3">
-            Entertainment
-          </span>
-
-         <p className='flex items-center gap-3 text-xl p-2 mt-4'><MdOutlinePeopleAlt className='text-xl text-purple-600' />The Rolling Stones</p>
-                   <p className='flex items-center gap-3 text-xl p-2'><LuCalendarDays className='text-xl  text-purple-600' />Jan 14,2026</p>
-                    <p className='flex items-center gap-3 text-xl p-2'><IoLocationOutline className='text-xl  text-purple-600' />Ashok Nagar, New Delhi</p>
-        </div>
-
-        <span className="text-green-600 font-semibold flex gap-2 items-center">
-          Completed <FaTrophy />
-        </span>
-      </div>
+        ))
+        
+      :
+      <p className='text-2xl text-red-800'>No registered events ...</p>
+    }
     </div>
 
     {/* RIGHT: No of Events (STACKED) */}
@@ -100,7 +139,7 @@ function Profile() {
           <p className="text-2xl flex gap-2 items-center">
             Total Events <FaCalendar />
           </p>
-          <h1 className="text-4xl font-bold">3</h1>
+          <h1 className="text-4xl font-bold">{alluserEvents?.totalEvents>0 ? alluserEvents?.totalEvents: 0}</h1>
           <p className="text-gray-600">Events registered</p>
         </div>
       </div>
@@ -112,7 +151,7 @@ function Profile() {
           <p className="text-2xl flex gap-2 items-center">
             Upcoming <FaRegClock />
           </p>
-          <h1 className="text-4xl font-bold">2</h1>
+          <h1 className="text-4xl font-bold">{alluserEvents?.upcomingCount>0 ? alluserEvents?.upcomingCount: 0}</h1>
           <p className="text-gray-600">Events coming up</p>
         </div>
       </div>
@@ -124,7 +163,7 @@ function Profile() {
           <p className="text-2xl flex gap-2 items-center">
             Completed <FaTrophy />
           </p>
-          <h1 className="text-4xl font-bold">1</h1>
+          <h1 className="text-4xl font-bold">{alluserEvents?.completedCount>0 ? alluserEvents?.completedCount: 0}</h1>
           <p className="text-gray-600">Events attended</p>
         </div>
       </div>

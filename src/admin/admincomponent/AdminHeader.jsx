@@ -1,16 +1,24 @@
 import React from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { FaUser } from "react-icons/fa";
 import { GiHolosphere } from "react-icons/gi";
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 
 function AdminHeader() {
+  const navigate = useNavigate()
   const navClass = ({ isActive }) =>
   `px-3 py-2 text-xl font-medium transition ${
     isActive
       ? 'underline underline-offset-4 text-purple-600'
       : 'text-white hover:text-purple-600 '
   }`;
+
+  const logOut = async()=>{
+     sessionStorage.clear()
+     navigate('/')
+  }
   return (
     <>
     <header className='top-0 left-0 w-full z-50 bg-black'>
@@ -42,16 +50,21 @@ function AdminHeader() {
 
         {/* <!-- Profile dropdown --> */}
          
-        <el-dropdown class="relative ml-3">
-          <button className="relative flex rounded-full focus:outline-none">
-  <span className="sr-only">Open user menu</span>
-  <img
-    src="https://pro-bel.com/wp-content/uploads/2019/11/blank-avatar-1-450x450.png"
-    alt="User Login"
-    className="w-13 h-13 rounded-full object-cover cursor-pointer "
-  />
-</button>
-        </el-dropdown>
+     <el-dropdown class="relative ml-3">
+               <button className="relative flex rounded-full focus:outline-none">
+                <span className="sr-only">Open user menu</span>
+                 <img
+                  src="https://pro-bel.com/wp-content/uploads/2019/11/blank-avatar-1-450x450.png"
+                  alt="User Login Image"
+                className="w-13 h-13 rounded-full object-cover cursor-pointer "/>
+                </button>
+     
+     
+               <el-menu anchor="bottom end" popover class="w-48 origin-top-right rounded-md shadow border-0 py-1 outline -outline-offset-1 outline-white/10 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in">
+               
+                 <button onClick={logOut} href="#" class="block px-4 py-2 text-sm text-black focus:bg-white/5 focus:outline-hidden">Sign out</button>
+               </el-menu>
+             </el-dropdown>
       </div>
     </div>
   </div>

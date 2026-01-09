@@ -58,7 +58,7 @@ function Events() {
         Stay tuned and be part of experiences that create lasting memories.</p>
         </div>
         <div className='flex py-10 justify-center items-center'>
-        <input type="text" placeholder=' Search events by title or location ....'  className='w-[40%] text-xl mx-10  px-5 py-3 border'/>
+        <input type="text" placeholder=' Search for events ....'  className='w-[40%] text-xl mx-10  px-5 py-3 border'/>
 {/* filter */}
 <el-dropdown class="inline-block">
   <button class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white/10 px-3 py-2 text-lg font-semibold text-white inset-ring-1 inset-ring-white/5 hover:bg-white/20">
@@ -105,7 +105,7 @@ function Events() {
                  ))
                  
                    :
-                     <p className='text-xl text-center'>No events..</p>
+                     <p className='text-xl text-center text-white'>No events..</p>
                    }
                  </div>
               </div>

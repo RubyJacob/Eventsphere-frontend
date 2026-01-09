@@ -5,15 +5,26 @@ import { useState } from "react";
 import { LuCalendarDays } from "react-icons/lu";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCurrencyRupee } from "react-icons/md";
-import { viewEventRegisterAPI } from '../services/allAPI';
+import { addRegisterDetailsAPI, viewEventRegisterAPI } from '../services/allAPI';
 import { useParams } from 'react-router-dom';
 
 
 function Register() {
     const [ticketCount, setTicketCount] = useState(1);
     const [singleEvent, setSingleEventDetails] = useState({})
-  const {id} = useParams()
-   console.log(singleEvent);
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const email = user?.email;
+
+    const {id} = useParams()
+    const registerDetails = {
+    email,
+    eventId: id,
+    eventtitle: singleEvent.title,
+    ticketCount: ticketCount,
+    ticketAmount: singleEvent.price * ticketCount,
+  };
+    //console.log(registerDetails);
+    //console.log(singleEvent);
    
 
          useEffect(()=>{
@@ -28,10 +39,28 @@ function Register() {
                       }
           const result = await viewEventRegisterAPI(reqHeader,id)
           //console.log(result);
-          setSingleEventDetails(result.data)
+          if(result.status == 200){
+               setSingleEventDetails(result.data)
+          }
+          else{
+            console.log(result);           
+          }
+         
          }
 
         }
+
+        const addUserRegister = async()=>{
+           const token = sessionStorage.getItem("token")
+                  if(token){
+                     const reqHeader = {
+                           "Authorization":`Bearer ${token}`
+                           }
+                      const result = await addRegisterDetailsAPI(reqHeader,registerDetails)
+                      console.log(result.data);                      
+                  }
+              }
+       
 
     const increaseTicket = () => {
     setTicketCount((prev) => prev + 1);
@@ -120,7 +149,7 @@ function Register() {
         </div>
 
         {/* Register Button */}
-        <button className="w-full py-3 rounded-xl bg-purple-600 text-white text-lg font-semibold hover:bg-purple-700 transition">
+        <button onClick={addUserRegister} className="w-full py-3 rounded-xl bg-purple-600 text-white text-lg font-semibold hover:bg-purple-700 transition">
           Proceed to Payment
         </button>
       </div>

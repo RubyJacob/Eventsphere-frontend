@@ -30,7 +30,12 @@ function View() {
                       }
           const result = await viewEventAPI(reqHeader,id)
           //console.log(result);
+          if(result.status == 200){
           setSingleEventDetails(result.data)
+          }
+          else{
+            console.log(result);          
+          }
          }
 
         }

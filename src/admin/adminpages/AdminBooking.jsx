@@ -1,89 +1,46 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import AdminHeader from '../admincomponent/AdminHeader'
 import AdminSideBar from '../admincomponent/AdminSideBar'
+import { allEventBookingDetailsAPI } from '../../services/allAPI'
+
 
 function AdminBooking() {
-  const bookings = {
-  musicEvents: [
-    {
-      id: "B001",
-      userId: "U101",
-      ticketCount: 2,
-      ticketAmount: 2000,
-      paymentStatus: "Paid",
-      bookingDate: "2025-01-10",
-    },
-    {
-      id: "B002",
-      userId: "U102",
-      ticketCount: 1,
-      ticketAmount: 1200,
-      paymentStatus: "Pending",
-      bookingDate: "2025-01-12",
-    },
-  ],
+  const [allEvents,setAllEvents] = useState([])
+  console.log(allEvents);
+  const formatDate = (date) =>
+    new Date(date)
+      .toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+      .replaceAll("/", "-");
+  
+  useEffect(()=>{
+    allEventDetails()
+  },[])
 
-  techEvents: [
-    {
-      id: "B003",
-      userId: "U103",
-      ticketCount: 3,
-      ticketAmount: 4500,
-      paymentStatus: "Paid",
-      bookingDate: "2025-01-15",
-    },
-    {
-      id: "B004",
-      userId: "U104",
-      ticketCount: 2,
-      ticketAmount: 3000,
-      paymentStatus: "Failed",
-      bookingDate: "2025-01-18",
-    },
-  ],
-};
+   const allEventDetails = async()=>{
+       const token = sessionStorage.getItem("token")
+                        if(token){
+                           const reqHeader = {
+                                 "Authorization":`Bearer ${token}`
+                            }
+                  const result = await allEventBookingDetailsAPI(reqHeader)
+                  //console.log(result);   
+                  if(result.status == 200){
+                    setAllEvents(result.data)
+                  }   
+                  else{
+                    console.log(result);
+                    
+                  }           
+           }
+        }
 
-const BookingTable = ({ title, data }) => (
-  <div className="mb-10">
-    <h2 className="text-xl font-semibold mb-4">{title}</h2>
+  
 
-    <table className="w-full border border-gray-300 text-center">
-      <thead className="bg-gray-200">
-        <tr>
-          <th className="p-2">Booking ID</th>
-          <th className="p-2">User ID</th>
-          <th className="p-2">Tickets</th>
-          <th className="p-2">Amount</th>
-          <th className="p-2">Booking Date</th>
-          <th className="p-2">Payment Status</th>
-         </tr>
-      </thead>
 
-      <tbody>
-        {data.map((item) => (
-          <tr key={item.id} className="border-t">
-            <td className="p-2">{item.id}</td>
-            <td className="p-2">{item.userId}</td>
-            <td className="p-2">{item.ticketCount}</td>
-            <td className="p-2">₹{item.ticketAmount}</td>
-            <td className="p-2">{item.bookingDate}</td>
-            <td
-              className={`p-2 font-semibold ${
-                item.paymentStatus === "Paid"
-                  ? "text-green-600"
-                  : item.paymentStatus === "Pending"
-                  ? "text-yellow-600"
-                  : "text-red-600"
-              }`}
-            >
-              {item.paymentStatus}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
 
   return (
     <>
@@ -94,8 +51,58 @@ const BookingTable = ({ title, data }) => (
         </div>
         <div className='col-span-4 p-10'>
           <div className="p-6">
-      <BookingTable title="Music Event Bookings" data={bookings.musicEvents} />
-      <BookingTable title="Tech Event Bookings" data={bookings.techEvents} />
+            <div className="mb-10">
+  
+
+   
+    
+    {
+    allEvents?.length > 0 ?
+    allEvents?.map((events,index)=>(
+      <div  key={index}>
+    <h2 className="text-2xl font-semibold mb-4 text-red-800">{events?.eventTitle}</h2>
+    <table className="w-full border border-gray-300 text-center mb-10">
+      <thead className="bg-gray-200">
+        <tr>
+          <th className="p-2">User ID</th>
+          <th className="p-2">Tickets</th>
+          <th className="p-2">Amount</th>
+          <th className="p-2">Booking Date</th>
+          <th className="p-2">Payment Status</th>
+         </tr>
+      </thead>
+
+      <tbody>
+         { 
+         events.users.map((user,index)=>(
+            <tr  key={index} className="border-t">
+            <td className="p-2">{user?.email}</td>
+            <td className="p-2">{user?.ticketCount}</td>
+            <td className="p-2">₹ {user?.ticketAmount}</td>
+            <td className="p-2">{formatDate(user?.bookingDate)}</td>
+            <td
+              className={`p-2 font-semibold ${
+                user?.paymentStatus  === "Paid"
+                  ? "text-green-600"
+                  : user?.paymentStatus === "Pending"
+                  ? "text-yellow-600"
+                  : "text-red-600"
+              }`}
+            >
+              {user?.paymentStatus}
+            </td> 
+          </tr>
+         ))
+        }
+      </tbody>
+    </table>
+    </div>
+    ))
+    
+    :
+    <div className='text-3xl text-center text-red-900'>No Bookings Yet...</div>
+    }
+  </div>
     </div>
         </div>
     </div>

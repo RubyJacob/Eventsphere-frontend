@@ -36,3 +36,29 @@ export const viewEventAPI = async(reqHeader,id)=>{
 export const viewEventRegisterAPI = async(reqHeader,id)=>{
     return await commonAPI("GET",`${serverURL}/events/${id}/register`,{},reqHeader)
 }
+
+//post add EventDetails of user for register
+export const addRegisterDetailsAPI = async(reqHeader,reqBody)=>{
+    return await commonAPI("POST",`${serverURL}/events/register-event`,reqBody,reqHeader)
+}
+
+//get event registered details for each event  by admin
+export const allEventBookingDetailsAPI = async(reqHeader)=>{
+    return await commonAPI("GET",`${serverURL}/grouped-users`,{},reqHeader)
+}
+
+//get each user registered events for profile page
+export const allUserBookedEventsAPI = async(reqHeader)=>{
+    return await commonAPI("GET",`${serverURL}/user-registered-events`,{},reqHeader)
+}
+
+//get all events - Admin page
+export const allAdminEventsAPI = async(reqHeader)=>{
+    return await commonAPI("GET",`${serverURL}/all-admin-events`,{},reqHeader)
+}
+
+//delete Event by admin
+export const deleteEventAPI = async(reqHeader,id)=>{
+    return await commonAPI("DELETE",`${serverURL}/event/${id}/delete`,{},reqHeader)
+}
+

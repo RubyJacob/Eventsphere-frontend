@@ -149,7 +149,7 @@ function Landing() {
             ) )
         
          :
-         <p className='text-xl text-center'>No events..</p>
+         <p className='text-xl text-center tex-white'>No events..</p>
          }
        </div>
      </div>

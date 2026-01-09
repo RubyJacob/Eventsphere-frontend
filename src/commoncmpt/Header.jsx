@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { FaUser } from "react-icons/fa";
 import { GiHolosphere } from "react-icons/gi";
 
@@ -7,6 +7,7 @@ import { GiHolosphere } from "react-icons/gi";
 function Header() {
   const [token,setToken] = useState("")
   const [dp,setDp] = useState("")
+  const navigate = useNavigate()
   const navClass = ({ isActive }) =>
   `px-3 py-2 text-xl font-medium transition ${
     isActive
@@ -22,6 +23,13 @@ function Header() {
       setDp(user.picture)
     }
   },[token])
+
+  const logOut = async()=>{
+     sessionStorage.clear()
+     setToken("")
+     setDp("")
+     navigate('/')
+  }
   return (
     <>
     <header className='absolute top-0 left-0 w-full z-50 bg-transparent'>
@@ -76,7 +84,7 @@ function Header() {
 
           <el-menu anchor="bottom end" popover class="w-48 origin-top-right rounded-md shadow border-0 py-1 outline -outline-offset-1 outline-white/10 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in">
             <Link to={'/profile'}  class="block px-4 py-2 text-sm text-black focus:bg-white/5 focus:outline-hidden">Your profile</Link>
-            <a href="#" class="block px-4 py-2 text-sm text-black focus:bg-white/5 focus:outline-hidden">Sign out</a>
+            <button onClick={logOut} href="#" class="block px-4 py-2 text-sm text-black focus:bg-white/5 focus:outline-hidden">Sign out</button>
           </el-menu>
         </el-dropdown>
 

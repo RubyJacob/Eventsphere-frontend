@@ -11,9 +11,63 @@ import { MdOutlinePeopleAlt } from "react-icons/md";
 
 import { MdOutlineCurrencyRupee } from "react-icons/md";
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import { allAdminEventsAPI, deleteEventAPI } from '../../services/allAPI';
 
 
 function AdminHomee() {
+  const [allAdminEvents,setAdminAllEvents] = useState([])
+  console.log(allAdminEvents);
+  
+
+  useEffect(()=>{
+    getAllAdminEvents()
+  },[])
+
+   const getAllAdminEvents = async()=>{
+            const token = sessionStorage.getItem("token")
+                        if(token){
+                           const reqHeader = {
+                                 "Authorization":`Bearer ${token}`
+                            }
+                    const result = await allAdminEventsAPI(reqHeader)
+              //console.log(result);
+           if(result.status == 200)
+           {
+              setAdminAllEvents(result.data)
+           }
+           else{
+            console.log(result);      
+           }
+          }
+           
+           
+         }
+
+   const deleteEvent = async(id)=>{
+    //console.log(id);
+    
+     const token = sessionStorage.getItem("token")
+          if(token){
+            const reqHeader = {
+               "Authorization":`Bearer ${token}`
+                  }
+            const result = await deleteEventAPI(reqHeader,id)
+            console.log(result);
+            if(result.status == 200){
+              getAllAdminEvents()
+            }
+            else{
+              console.log(result);
+              
+            }
+          }
+     
+         }
+
+
+
   return (
     <>
     <AdminHeader/>
@@ -65,44 +119,26 @@ function AdminHomee() {
                       <div className='px-8'>
                          <div className='grid grid-cols-3 gap-3 py-10 text-black place-items-center'>
                           {/* concert */}
-                           <div className='w-100 h-130 border rounded-2xl shadow bg-gray-200 '>
-                            <img className='w-100 h-65 rounded-t-2xl ' src="https://tse1.explicit.bing.net/th/id/OIP.hBpV_NOmuEGZC5a3dDvfGAHaE7?rs=1&pid=ImgDetMain&o=7&rm=3" alt="" />
-                             <h1 className='text-3xl font-bold px-3 py-3 text-purple-800'>Concert</h1>
-                              <p className='flex items-center gap-3 text-xl p-2'><MdOutlinePeopleAlt className='text-xl text-purple-600' />The Rolling Stones</p>
-                              <p className='flex items-center gap-3 text-xl p-2'><LuCalendarDays className='text-xl  text-purple-600' />Jan 14,2026</p>
-                               <p className='flex items-center gap-3 text-xl p-2'><IoLocationOutline className='text-xl  text-purple-600' />Ashok Nagar, New Delhi</p>
+                           { 
+                             allAdminEvents?.length>0 ?
+                             allAdminEvents?.map(evnts=>(
+                                 <div key={evnts?._id} className='w-100 h-auto border rounded-2xl shadow bg-gray-200 '>
+                            <img className='w-100 h-65 rounded-t-2xl ' src={evnts?.eventImage} alt="" />
+                             <h1 className='text-3xl font-bold px-3 py-3 text-purple-800'>{evnts?.category} </h1>
+                              <p className='flex items-center gap-3 text-xl p-2'><MdOutlinePeopleAlt className='text-xl text-purple-600' />{evnts?.title} </p>
+                              <p className='flex items-center gap-3 text-xl p-2'><LuCalendarDays className='text-xl  text-purple-600' />{new Date(evnts?.date).toLocaleDateString("en-GB").replaceAll("/", "-")}</p>
+                               <p className='flex items-center gap-3 text-xl p-2'><IoLocationOutline className='text-xl  text-purple-600' />{evnts?.location}</p>
                                <hr />
                                <div className='flex py-4 p-2 justify-between'>
-                                <p className='flex items-center text-xl'><MdOutlineCurrencyRupee className='text-xl  text-purple-600' />499</p>
-                                 <button className='flex items-center justify-center text-black bg-red-700 py-1 px-3 rounded text-lg  hover:text-white '>DELETE</button>
+                                <p className='flex items-center text-xl'><MdOutlineCurrencyRupee className='text-xl  text-purple-600' />{evnts?.price}</p>
+                                 <button onClick={()=>deleteEvent(evnts?._id)} className='flex items-center justify-center text-black bg-red-700 py-1 px-3 rounded text-lg  hover:text-white '>DELETE</button>
                                </div>
                            </div>
-                           {/* workshop */}
-                            <div className='w-100 h-130 border rounded-2xl shadow bg-gray-200 transition delay-150 duration-500 ease-in-out hover:-translate-y-1 hover:scale-110'>
-                               <img className='w-100 h-65 rounded-t-2xl' src="https://tse2.mm.bing.net/th/id/OIP.Gxlrp8fx8ygrJ9fGJxKEOgHaE6?rs=1&pid=ImgDetMain&o=7&rm=3" alt="" />
-                             <h1 className='text-3xl font-bold px-3 py-3 text-purple-800'>Workshop</h1>
-                              <p className='flex items-center gap-3 text-xl p-2'><MdOutlinePeopleAlt className='text-xl text-purple-600' />Art Flow Studios</p>
-                              <p className='flex items-center gap-3 text-xl p-2'><LuCalendarDays className='text-xl  text-purple-600' />Dec 22,2025</p>
-                               <p className='flex items-center gap-3 text-xl p-2'><IoLocationOutline className='text-xl  text-purple-600' />North Street, Mumbai</p>
-                               <hr />
-                               <div className='flex py-4 p-2 justify-between'>
-                                <p className='flex items-center text-xl'><MdOutlineCurrencyRupee className='text-xl  text-purple-600' />399</p>
-                                 <Link to={'/events/view'} className='flex items-center justify-center text-black  text-lg  hover:text-purple-600 hover:underline underline-offset-4'>View Details <IoIosArrowRoundForward className='text-2xl'/></Link>
-                               </div>
-                           </div>
-                           {/* conference */}
-                          <div className='w-100 h-130 border rounded-2xl shadow bg-gray-200  transition delay-150 duration-500 ease-in-out hover:-translate-y-1 hover:scale-110'>
-                             <img className='w-100 h-65 rounded-t-2xl' src="https://tse1.mm.bing.net/th/id/OIP.R9ujTs-bl92y8dGIUgm7gQHaE8?rs=1&pid=ImgDetMain&o=7&rm=3" alt="" />
-                             <h1 className='text-3xl font-bold px-3 py-3 text-purple-800'>Conference</h1>
-                              <p className='flex items-center gap-3 text-xl p-2'><MdOutlinePeopleAlt className='text-xl text-purple-600' />Global Tech Conference</p>
-                              <p className='flex items-center gap-3 text-xl p-2'><LuCalendarDays className='text-xl  text-purple-600' />Dec 28,2025</p>
-                               <p className='flex items-center gap-3 text-xl p-2'><IoLocationOutline className='text-xl  text-purple-600' />MC Road, Bangalore</p>
-                               <hr />
-                               <div className='flex py-4 p-2 justify-between'>
-                                <p className='flex items-center text-xl'><MdOutlineCurrencyRupee className='text-xl  text-purple-600' />599</p>
-                                 <Link to={'/events/view'} className='flex items-center justify-center text-black  text-lg  hover:text-purple-600 hover:underline underline-offset-4'>View Details <IoIosArrowRoundForward className='text-2xl'/></Link>
-                               </div>
-                           </div>
+                             ))
+                           
+                            :
+                            <p className='my-5 text-center text-2xl text-red-800'>No Upcoming Events ...</p>
+                          }
                          </div>
                       </div>
               </section>

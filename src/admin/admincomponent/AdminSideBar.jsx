@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaBookReader, FaHome } from 'react-icons/fa'
 import { FaGear } from 'react-icons/fa6'
 import { Link } from 'react-router-dom'
@@ -9,15 +9,25 @@ import { MdOutlineEventAvailable } from "react-icons/md";
 
 
 function AdminSideBar() {
+  const [adminProfile,setAdminProfile] = useState("")
+
+
+   useEffect(()=>{
+       if(sessionStorage.getItem("token") && sessionStorage.getItem("user")){
+          const user = JSON.parse(sessionStorage.getItem("user"))
+          setAdminProfile(user)
+       }
+    },[])
+
   return (
-     <div className='bg-gray-300 min-h-screen md: flex flex-col text-center border'>
+     <div className='bg-gray-300 h-screen md: flex flex-col text-center border'>
       <h1 className='font-extrabold pt-30 text-2xl'>Admin Control Panel</h1>
     {/* admin image */}
      <div className='flex justify-center items-center my-10'>
        <img width={'150px'} height={'150px'} style={{borderRadius:'50%'}} src="https://img.freepik.com/premium-photo/business-stock-photo-wallpaper_1137879-162007.jpg" alt="user" />
      </div>
      {/* name */}
-     <h1 className='font-bold text-3xl mb-5'>Ruby Jacob</h1>
+     <h1 className='font-bold text-3xl mb-5'>{adminProfile?.username}</h1>
      {/* links */}
      <div className='mt-10 flex flex-col justify-center items-start px-15'>
       <div className='mb-3'>
