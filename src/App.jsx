@@ -12,6 +12,8 @@ import AdminEvents from './admin/adminpages/AdminEvents'
 import AdminProfile from './admin/adminpages/AdminProfile'
 import AdminBooking from './admin/adminpages/AdminBooking'
 import Register from './mainpages/Register'
+import PaymentError from './mainpages/PaymentError'
+import PaymentSuccesss from './mainpages/PaymentSuccesss'
 
 function App() {
   return (
@@ -23,9 +25,13 @@ function App() {
       <Route path="/events" element={<Events />}/>
       <Route path="/contact" element={<Contact />}/>
       <Route path="/about" element={<About />}/>
+
       <Route path="/events/:id/view" element={<View />}/>
       <Route path="/event/:id/register" element={<Register />}/>
       <Route path="/profile" element={<Profile />}/>
+      <Route path="/user/payment-success" element={<PaymentSuccesss />}/>
+      <Route path="/user/payment-error" element={<PaymentError />}/>
+      
       <Route path="/admin/home" element={<AdminHomee />}/>
       <Route path="/admin/profile" element={<AdminProfile />}/>
       <Route path="/admin/events" element={<AdminEvents />}/>

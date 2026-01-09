@@ -5,8 +5,9 @@ import { useState } from "react";
 import { LuCalendarDays } from "react-icons/lu";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCurrencyRupee } from "react-icons/md";
-import { addRegisterDetailsAPI, viewEventRegisterAPI } from '../services/allAPI';
+import { makePaymentAPI, viewEventRegisterAPI } from '../services/allAPI';
 import { useParams } from 'react-router-dom';
+import {loadStripe} from '@stripe/stripe-js';
 
 
 function Register() {
@@ -50,14 +51,23 @@ function Register() {
 
         }
 
-        const addUserRegister = async()=>{
+        const makePayment = async()=>{
+           const stripe = await loadStripe('pk_test_51SkJDw2IihGp2GQrXb8jZ3IeekKaFo6tI2dGjZ2RgFvJbYKprtYuDePIq1TIPnykCpLTVApMbQ9GON0lQ8H1ae7U00XytiWOqB');
+             //api call
            const token = sessionStorage.getItem("token")
                   if(token){
                      const reqHeader = {
                            "Authorization":`Bearer ${token}`
                            }
-                      const result = await addRegisterDetailsAPI(reqHeader,registerDetails)
-                      console.log(result.data);                      
+                      const result = await makePaymentAPI(reqHeader,registerDetails)
+                     // console.log(result);  
+                      if(result.status == 200){
+                           const{url} = result.data
+                            window.location.href = url
+                      }
+                      else{
+                        console.log(result);                       
+                      }                   
                   }
               }
        
@@ -149,7 +159,7 @@ function Register() {
         </div>
 
         {/* Register Button */}
-        <button onClick={addUserRegister} className="w-full py-3 rounded-xl bg-purple-600 text-white text-lg font-semibold hover:bg-purple-700 transition">
+        <button onClick={makePayment} className="w-full py-3 rounded-xl bg-purple-600 text-white text-lg font-semibold hover:bg-purple-700 transition">
           Proceed to Payment
         </button>
       </div>

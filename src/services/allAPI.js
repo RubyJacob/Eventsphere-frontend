@@ -37,8 +37,8 @@ export const viewEventRegisterAPI = async(reqHeader,id)=>{
     return await commonAPI("GET",`${serverURL}/events/${id}/register`,{},reqHeader)
 }
 
-//post add EventDetails of user for register
-export const addRegisterDetailsAPI = async(reqHeader,reqBody)=>{
+//get add EventDetails of user for register
+export const makePaymentAPI = async(reqHeader,reqBody)=>{
     return await commonAPI("POST",`${serverURL}/events/register-event`,reqBody,reqHeader)
 }
 
@@ -61,4 +61,10 @@ export const allAdminEventsAPI = async(reqHeader)=>{
 export const deleteEventAPI = async(reqHeader,id)=>{
     return await commonAPI("DELETE",`${serverURL}/event/${id}/delete`,{},reqHeader)
 }
+
+//save booking details to bookings  
+export const saveBookingAPI = async(reqHeader,bookingData)=>{
+    return await commonAPI("POST",`${serverURL}/save-details`,bookingData,reqHeader)
+}
+
 
